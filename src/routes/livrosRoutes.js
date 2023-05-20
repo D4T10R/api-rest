@@ -1,7 +1,7 @@
-import express from 'express';
-import LivroController from '../controllers/livrosController.js';
+import express from "express";
+import LivroController from "../controllers/livrosController.js";
 
-const router = express.Router()
+const router = express.Router();
 
 
 router
@@ -10,6 +10,6 @@ router
     .get("/livros/:id", LivroController.listarLivrosPorId)
     .post("/livros", LivroController.cadastrarLivros)
     .put("/livros/:id", LivroController.atualizarLivros)
-    .delete("/livros/:id", LivroController.excluirLivros)
+    .delete("/livros/:id", LivroController.excluirLivros);
 
 export default router;
