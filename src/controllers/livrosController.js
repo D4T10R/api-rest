@@ -1,4 +1,5 @@
-import livros from "../models/livros.js";
+import NaoEncontrado from "../erros/NaoEncontrado.js";
+import {livros} from "../models/index.js";
 
 class livroController {
     static listarLivros = async (req, res, next) => {
@@ -19,8 +20,12 @@ class livroController {
             const livro = await livros.findById(id)
                 .populate("autor", "nome")
                 .exec();
-                
-            res.status(200).send(livro);
+            
+            if (livro !== null) {
+                res.status(200).send(livro);
+            } else {
+                next(new NaoEncontrado("Livro não encontrado"));
+            }
         } catch (err) {
             next(err);
         }
@@ -31,8 +36,12 @@ class livroController {
         try{
             const editora = req.query.editora;
             const livro = await livros.find({"editora": editora}, {});
-    
-            res.status(200).send(livro);
+            
+            if (livro !== null) {
+                res.status(200).send(livro);
+            } else {
+                next(new NaoEncontrado("Livro não encontrado"));
+            }
         } catch (err) {
             next(err);
         }
@@ -53,7 +62,12 @@ class livroController {
         try {
             const id = req.params.id;
             const livroAtualizado = await livros.findByIdAndUpdate(id, {$set: req.body});
-            res.status(200).send({message: `LIVRO ATUALIZADO COM SUCESSO ${livroAtualizado}`});
+
+            if (livroAtualizado !== null) {
+                res.status(200).send({message: `LIVRO ATUALIZADO COM SUCESSO ${livroAtualizado}`});
+            } else {
+                next(new NaoEncontrado("Livro não encontrado"));
+            }
         } catch (err) {
             next(err);
         }
@@ -65,7 +79,11 @@ class livroController {
             const id = req.params.id;
             const livroExcluido = await livros.findByIdAndDelete(id);
             
-            res.status(200).send(`Livro EXCLUIDO com SUCESSO ${livroExcluido}`);
+            if (livroExcluido !== null) {
+                res.status(200).send(`Livro EXCLUIDO com SUCESSO ${livroExcluido}`);
+            } else {
+                next(new NaoEncontrado("Livro não encontrado para sua exclusão."));
+            }
         } catch (err) {
             next(err);
         }
